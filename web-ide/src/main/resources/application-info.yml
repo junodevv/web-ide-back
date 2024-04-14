@@ -1,0 +1,11 @@
+spring:
+  # DB 연결
+  datasource:
+    url: "url 주소"
+    username: "username"
+    password: "password"
+  # jpa
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true

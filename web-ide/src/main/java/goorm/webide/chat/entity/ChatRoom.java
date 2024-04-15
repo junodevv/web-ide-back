@@ -1,10 +1,13 @@
 package goorm.webide.chat.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,5 +43,13 @@ public class ChatRoom {
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Chat> chats;
+
+    @Builder
+    public ChatRoom(String roomName, LocalDateTime createdAt, Set<ChatUser> chatUsers, List<Chat> chats) {
+        this.roomName = roomName;
+        this.createdAt = createdAt;
+        this.chatUsers = chatUsers != null ? chatUsers : new HashSet<>();
+        this.chats = chats != null ? chats : new ArrayList<>();
+    }
 }
 

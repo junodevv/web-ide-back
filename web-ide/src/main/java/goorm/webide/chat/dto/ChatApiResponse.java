@@ -1,4 +1,4 @@
-package goorm.webide.chat.entity;
+package goorm.webide.chat.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * packageName    : goorm.webide.chat.entity
+ * packageName    : goorm.webide.chat.dto
  * fileName       : ChatApiResponse
  * author         : won
  * date           : 2024/04/16
@@ -23,7 +23,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonPropertyOrder({"success", "message","data"})
-public class ChatApiResponse<T> implements Serializable{
+public class ChatApiResponse<T> implements Serializable {
 
     private boolean success;
     private String message;

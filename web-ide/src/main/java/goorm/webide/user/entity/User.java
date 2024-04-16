@@ -37,13 +37,13 @@ public class User{
     @Column(name = "user_no", nullable = false, unique = true)
     private Long userNo;
     @Column(name = "username", nullable = false)
-    private String userName;
+    private String username;
     @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "email", nullable = false)
     private String email;
     @Column(name = "nickname", nullable = false)
-    private String nickName;
+    private String nickname;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

@@ -18,10 +18,10 @@ class UserRepositoryTest {
     @DisplayName("entity 저장 테스트")
     void entity_저장_테스트(){
         User user = User.builder()
-                .userName("test1234")
+                .username("test1234")
                 .password("test123@#")
                 .email("test123@gmail.com")
-                .nickName("leejuno")
+                .nickname("leejuno")
                 .build();
 
         User user1 = repository.save(user);

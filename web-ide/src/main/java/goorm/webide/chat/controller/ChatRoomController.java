@@ -2,17 +2,14 @@ package goorm.webide.chat.controller;
 
 import goorm.webide.chat.dto.ChatRoomRequest;
 import goorm.webide.chat.dto.ChatRoomResponse;
-import goorm.webide.chat.entity.ChatApiResponse;
+import goorm.webide.chat.dto.ChatApiResponse;
 import goorm.webide.chat.service.ChatRoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * packageName    : goorm.webide.chat.controller
@@ -31,6 +28,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/chat/rooms")
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
+
+    // 검증 실패 예외 처리
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ChatApiResponse<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> fieldError.getDefaultMessage())
+                .findFirst()
+                .orElse("잘못된 입력입니다.");
+
+        return ChatApiResponse.fail(errorMessage);
+    }
 
     /* 채팅방 생성(POST /chat/rooms) */
     @PostMapping

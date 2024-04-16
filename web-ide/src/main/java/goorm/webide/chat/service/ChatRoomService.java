@@ -39,10 +39,10 @@ public class ChatRoomService {
                 .build();
         chatRoomRepository.save(chatRoom);
 
-        return ChatRoomResponse.builder()
-                .roomNo(chatRoom.getRoomNo())
-                .roomName(chatRoom.getRoomName())
-                .createdAt(chatRoom.getCreatedAt())
-                .build();
+        ChatRoomResponse response = new ChatRoomResponse(
+                chatRoom.getRoomNo(),
+                chatRoom.getRoomName(),
+                chatRoom.getCreatedAt());
+        return response;
     }
 }

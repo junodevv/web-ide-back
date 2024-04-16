@@ -1,8 +1,7 @@
 package goorm.webide.chat.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -19,8 +18,7 @@ import java.time.LocalDateTime;
  * 2024/04/15        won       최초 생성
  */
 
-@Builder
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomResponse {

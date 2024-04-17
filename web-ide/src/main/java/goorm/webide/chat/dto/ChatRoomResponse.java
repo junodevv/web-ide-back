@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomResponse {
+    private Long userNo;
     private Long roomNo;
     private String roomName;
 

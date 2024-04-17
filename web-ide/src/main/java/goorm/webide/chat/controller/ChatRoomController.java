@@ -58,8 +58,8 @@ public class ChatRoomController {
 
     /* 채팅방 목록 조회(GET /chat/rooms) */
     @GetMapping
-    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRooms() {
-        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRooms();
+    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRooms(@RequestParam("userNo") Long userNo) {
+        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRoomsByUserId(userNo);
         ChatApiResponse<List<ChatRoomResponse>> apiResponse = ChatApiResponse.success(
                 roomResponses,
                 "채팅방 목록 조회에 성공했습니다."

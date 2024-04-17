@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * packageName    : goorm.webide.chat.service
@@ -36,13 +38,28 @@ public class ChatRoomService {
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomName(roomRequest.getRoomName())
                 .createdAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
                 .build();
         chatRoomRepository.save(chatRoom);
 
         ChatRoomResponse response = new ChatRoomResponse(
                 chatRoom.getRoomNo(),
                 chatRoom.getRoomName(),
-                chatRoom.getCreatedAt());
+                chatRoom.getCreatedAt(),
+                chatRoom.getUpdateAt());
         return response;
+    }
+
+    /* 채팅방 목록 조회(GET /chat/rooms) */
+    // TODO: 채팅방 목록 조회 기능을 회원이 속한 채팅방만을 조회하는 기능으로 수정
+    @Transactional(readOnly = true)
+    public List<ChatRoomResponse> findAllRooms() {
+        return chatRoomRepository.findAll().stream()
+                .map(room -> new ChatRoomResponse(
+                        room.getRoomNo(),
+                        room.getRoomName(),
+                        room.getCreatedAt(),
+                        room.getUpdateAt()))
+                .collect(Collectors.toList());
     }
 }

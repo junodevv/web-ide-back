@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * packageName    : goorm.webide.chat.controller
  * fileName       : ChatRoomController
@@ -53,4 +55,16 @@ public class ChatRoomController {
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
+
+    /* 채팅방 목록 조회(GET /chat/rooms) */
+    @GetMapping
+    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRooms() {
+        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRooms();
+        ChatApiResponse<List<ChatRoomResponse>> apiResponse = ChatApiResponse.success(
+                roomResponses,
+                "채팅방 목록 조회에 성공했습니다."
+        );
+        return ResponseEntity.ok(apiResponse);
+    }
+
 }

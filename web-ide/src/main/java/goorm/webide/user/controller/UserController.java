@@ -26,23 +26,28 @@ public class UserController {
     public ResponseEntity registerUser(@Valid @RequestBody RegisterRequest registerRequest,
                                        BindingResult bindingResult
     ){
-        // TODO: 리펙토링하자 너무 지저분
+        validateAllParam(passwordValidate(registerRequest, bindingResult));
+        return ResponseEntity.ok(service.registerUser(registerRequest));
+    }
+
+    private BindingResult passwordValidate(RegisterRequest registerRequest, BindingResult bindingResult){
         if(!registerRequest.getPassword().equals(registerRequest.getPasswordConfirm())){
             bindingResult.addError( new FieldError(
-                            "password_confirmation",
-                            "passwordConfirm",
-                            "비밀번호와 비밀번호 확인이 일치하지 않습니다.")
+                    "password_confirmation",
+                    "passwordConfirm",
+                    "비밀번호와 비밀번호 확인이 일치하지 않습니다.")
             );
         }
-        if(bindingResult.hasErrors()){
-            List<String> errors = bindingResult.getAllErrors().stream()
+        return bindingResult;
+    }
+    private void validateAllParam(BindingResult passwordValidateResult){
+        if(passwordValidateResult.hasErrors()){
+            List<String> errors = passwordValidateResult.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage())
                     .toList();
             throw new RegisterException(
                     RegisterResult.FAIL.getResult(),RegisterResult.FAIL.getMessage(), errors
             );
         }
-        return ResponseEntity.ok(service.registerUser(registerRequest));
     }
-
 }

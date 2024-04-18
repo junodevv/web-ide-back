@@ -4,6 +4,7 @@ import goorm.webide.user.dto.UserDto;
 import goorm.webide.user.dto.request.RegisterRequest;
 import goorm.webide.user.dto.response.RegisterResponse;
 import goorm.webide.user.entity.User;
+import goorm.webide.user.util.enums.RegisterResult;
 
 public class EntityDtoMapper {
     /**
@@ -26,8 +27,8 @@ public class EntityDtoMapper {
      */
     public static RegisterResponse userToRegisterResponse(User user){
         return RegisterResponse.builder()
-                .success(true)
-                .message("회원가입이 성공적으로 완료되었습니다.")
+                .success(RegisterResult.REGISTER_SUCCESS.getResult())
+                .message(RegisterResult.REGISTER_SUCCESS.getMessage())
                 .user(userToDto(user))
                 .build();
     }

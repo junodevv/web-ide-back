@@ -5,8 +5,12 @@ import goorm.webide.user.dto.response.RegisterResponse;
 import goorm.webide.user.entity.User;
 import goorm.webide.user.repository.UserRepository;
 import goorm.webide.user.util.EntityDtoMapper;
+import goorm.webide.user.util.enums.RegisterResult;
+import goorm.webide.user.util.exception.RegisterException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 @Service
 @RequiredArgsConstructor

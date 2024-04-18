@@ -7,7 +7,8 @@ import goorm.webide.user.repository.UserRepository;
 import goorm.webide.user.util.EntityDtoMapper;
 import goorm.webide.user.util.enums.RegisterResult;
 import goorm.webide.user.util.exception.DuplicateException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +19,23 @@ public class UserService {
     private final UserRepository repository;
 
     public RegisterResponse registerUser(RegisterRequest registerRequest){
-        checkEmail(registerRequest.getEmail());
+        checkDuplicate(registerRequest.getEmail(), registerRequest.getUsername());
         User user = EntityDtoMapper.registerReqToUser(registerRequest);
         User saveResult = repository.save(user);
         // 성공
         return EntityDtoMapper.userToRegisterResponse(saveResult);
     }
 
-    private void checkEmail(String email){
+    private void checkDuplicate(String email, String username){
+        List<String> errors = new ArrayList<>();
         if(repository.findUserByEmail(email).isPresent()){
-            throw new DuplicateException(
-                        RegisterResult.FAIL.getResult(), RegisterResult.FAIL.getMessage(),
-                        Arrays.asList("이미 사용 중인 이메일입니다."));
+            errors.add("이미 사용중인 이메일입니다.");
+        }
+        if (repository.findUserByUsername(username).isPresent()) {
+            errors.add("이미 사용중인 아이디입니다.");
+        }
+        if(errors.size()>0){
+            throw new DuplicateException(RegisterResult.FAIL.getResult(), RegisterResult.FAIL.getMessage(), errors);
         }
     }
 }

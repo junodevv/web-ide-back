@@ -1,5 +1,9 @@
 package goorm.webide.chat.repository;
 
+import goorm.webide.chat.entity.Chat;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 /**
  * packageName    : goorm.webide.chat.repository
  * fileName       : ChatRepository
@@ -12,5 +16,6 @@ package goorm.webide.chat.repository;
  * 2024/04/14        won       최초 생성
  */
 
-public interface ChatRepository {
+@Repository
+public interface ChatRepository extends JpaRepository<Chat, Long> {
 }

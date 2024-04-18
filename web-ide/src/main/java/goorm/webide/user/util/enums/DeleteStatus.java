@@ -1,4 +1,4 @@
-package goorm.webide.user.entity;
+package goorm.webide.user.util.enums;
 
 public enum DeleteStatus {
     DELETE,

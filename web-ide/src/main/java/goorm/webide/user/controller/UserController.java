@@ -26,6 +26,7 @@ public class UserController {
     public ResponseEntity registerUser(@Valid @RequestBody RegisterRequest registerRequest,
                                        BindingResult bindingResult
     ){
+        // TODO: 리펙토링하자 너무 지저분
         if(!registerRequest.getPassword().equals(registerRequest.getPasswordConfirm())){
             bindingResult.addError( new FieldError(
                             "password_confirmation",
@@ -38,7 +39,7 @@ public class UserController {
                     .map(e -> e.getDefaultMessage())
                     .toList();
             throw new RegisterException(
-                    RegisterResult.REGISTER_FAIL.getResult(),RegisterResult.REGISTER_FAIL.getMessage(), errors
+                    RegisterResult.FAIL.getResult(),RegisterResult.FAIL.getMessage(), errors
             );
         }
         return ResponseEntity.ok(service.registerUser(registerRequest));

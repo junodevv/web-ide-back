@@ -27,8 +27,8 @@ public class EntityDtoMapper {
      */
     public static RegisterResponse userToRegisterResponse(User user){
         return RegisterResponse.builder()
-                .success(RegisterResult.REGISTER_SUCCESS.getResult())
-                .message(RegisterResult.REGISTER_SUCCESS.getMessage())
+                .success(RegisterResult.SUCCESS.getResult())
+                .message(RegisterResult.SUCCESS.getMessage())
                 .user(userToDto(user))
                 .build();
     }

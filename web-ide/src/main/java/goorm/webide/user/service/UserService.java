@@ -10,6 +10,7 @@ import goorm.webide.user.util.exception.DuplicateException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,9 +18,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     public RegisterResponse registerUser(RegisterRequest registerRequest){
         checkDuplicate(registerRequest.getEmail(), registerRequest.getUsername());
+        String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
+        registerRequest.setPassword(encodedPassword);
         User user = EntityDtoMapper.registerReqToUser(registerRequest);
         User saveResult = repository.save(user);
         // 성공

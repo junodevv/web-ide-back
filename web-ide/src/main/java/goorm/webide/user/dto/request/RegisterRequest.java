@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 @Getter
+@Setter
 @Builder
 public class RegisterRequest {
     @NotBlank(message = "아이디를 입력해주세요")

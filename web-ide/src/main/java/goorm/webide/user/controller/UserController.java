@@ -32,11 +32,7 @@ public class UserController {
 
     private BindingResult passwordValidate(RegisterRequest registerRequest, BindingResult bindingResult){
         if(!registerRequest.getPassword().equals(registerRequest.getPasswordConfirm())){
-            bindingResult.addError( new FieldError(
-                    "password_confirmation",
-                    "passwordConfirm",
-                    "비밀번호와 비밀번호 확인이 일치하지 않습니다.")
-            );
+            bindingResult.reject("passwordMismatch", "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
         return bindingResult;
     }

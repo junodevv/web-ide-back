@@ -11,6 +11,8 @@ import goorm.webide.chat.repository.ChatRoomRepository;
 import goorm.webide.user.entity.User;
 import goorm.webide.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,7 @@ public class ChatService {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
+    /* 채팅 보내기 */
     @Transactional
     public ChatResponse saveChat(ChatRequest chatRequest, Long roomNo) throws JsonProcessingException {
         String json = objectMapper.writeValueAsString(chatRequest);
@@ -56,11 +59,26 @@ public class ChatService {
         chatRepository.save(chat);
 
         return new ChatResponse(
-                user.getUserNo(),
-                chatRoom.getRoomNo(),
                 chat.getChatNo(),
+                chatRoom.getRoomNo(),
+                user.getUserNo(),
                 chat.getChatTxt(),
-                chat.getCreatedAt()
+                chat.getCreatedAt(),
+                chat.getUpdateAt()
         );
+    }
+
+    /* 채팅 불러오기 GET /chat/rooms/{roomNo} */
+    @Transactional(readOnly = true)
+    public Page<ChatResponse> getAllChatsByRoomNo(Long roomNo, Pageable pageable) {
+        Page<Chat> chats = chatRepository.findByChatRoomRoomNo(roomNo, pageable);
+        return chats.map(chat -> new ChatResponse(
+                chat.getChatNo(),
+                chat.getChatRoom().getRoomNo(),
+                chat.getUser().getUserNo(),
+                chat.getChatTxt(),
+                chat.getCreatedAt(),
+                chat.getUpdateAt()
+        ));
     }
 }

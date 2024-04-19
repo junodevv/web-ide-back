@@ -22,9 +22,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatResponse {
-    private Long userNo;
-    private Long chatRoomNo;
     private Long chatNo;
+    private Long roomNo;
+    private Long userNo;
     private String chatTxt;
     private LocalDateTime createdAt;
+    private LocalDateTime updateAt;
 }

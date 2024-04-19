@@ -64,4 +64,19 @@ public class ChatController {
         );
         return ResponseEntity.ok(apiResponse);
     }
+
+    /* 채팅 내 메시지 검색 GET /chat/rooms/{roomNo}/search */
+    @GetMapping("/chat/rooms/{roomNo}/search")
+    public ResponseEntity<ChatApiResponse<Page<ChatResponse>>> getChatsByRoomNo(
+            @PathVariable("roomNo") Long roomNo,
+            @RequestParam("searchTxt") String searchTxt,
+            Pageable pageable
+    ) {
+        Page<ChatResponse> chatResponses = chatService.searchChatsByRoomNo(roomNo, searchTxt, pageable);
+        ChatApiResponse<Page<ChatResponse>> apiResponse = ChatApiResponse.success(
+                chatResponses,
+                "검색 결과입니다."
+        );
+        return ResponseEntity.ok(apiResponse);
+    }
 }

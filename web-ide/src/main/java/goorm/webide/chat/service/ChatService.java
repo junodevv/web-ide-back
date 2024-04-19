@@ -81,4 +81,18 @@ public class ChatService {
                 chat.getUpdateAt()
         ));
     }
+
+    /* 채팅 내 메시지 검색 GET /chat/rooms/{roomNo}/search */
+    @Transactional(readOnly = true)
+    public Page<ChatResponse> searchChatsByRoomNo(Long roomNo, String searchTxt, Pageable pageable) {
+        Page<Chat> searchChats = chatRepository.findByChatRoomRoomNoAndChatTxtChatTxtContaining(roomNo, searchTxt, pageable);
+        return searchChats.map(chat -> new ChatResponse(
+                chat.getChatNo(),
+                chat.getChatRoom().getRoomNo(),
+                chat.getUser().getUserNo(),
+                chat.getChatTxt(),
+                chat.getCreatedAt(),
+                chat.getUpdateAt()
+        ));
+    }
 }

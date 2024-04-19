@@ -15,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -70,8 +68,19 @@ public class ChatRoomService {
                 chatRoom.getUpdateAt());
     }
 
-    /* 채팅방 목록 조회(GET /chat/rooms) */
-    // TODO: 채팅방 목록 조회 기능을 회원이 속한 채팅방만을 조회하는 기능으로 수정
+    /* 전체 채팅방 목록 조회(GET /chat/rooms) */
+    @Transactional(readOnly = true)
+    public List<ChatRoomResponse> findAllRooms() {
+        return chatRoomRepository.findAll().stream()
+                .map(room -> new ChatRoomResponse(
+                        room.getRoomNo(),
+                        room.getRoomName(),
+                        room.getCreatedAt(),
+                        room.getUpdateAt()))
+                .collect(Collectors.toList());
+    }
+
+    /* 회원별 채팅방 목록 조회(GET /chat/rooms) */
     @Transactional(readOnly = true)
     public List<ChatRoomResponse> findAllRoomsByUserId(Long userNo) {
         List<ChatUser> chatUsers = chatUserRepository.findByUserUserNo(userNo);

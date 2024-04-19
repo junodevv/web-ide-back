@@ -32,4 +32,11 @@ public class ChatRoomResponse {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateAt;
+
+    public ChatRoomResponse(Long roomNo, String roomName, LocalDateTime createdAt, LocalDateTime updateAt) {
+        this.roomNo = roomNo;
+        this.roomName = roomName;
+        this.createdAt = createdAt;
+        this.updateAt = updateAt;
+    }
 }

@@ -56,9 +56,21 @@ public class ChatRoomController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
-    /* 채팅방 목록 조회(GET /chat/rooms) */
+    /* 전체 채팅방 목록 조회(GET /chat/rooms) */
     @GetMapping
-    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRooms(@RequestParam("userNo") Long userNo) {
+    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRooms() {
+        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRooms();
+        ChatApiResponse<List<ChatRoomResponse>> apiResponse = ChatApiResponse.success(
+                roomResponses,
+                "전체 채팅방 목록 조회에 성공했습니다."
+        );
+        return ResponseEntity.ok(apiResponse);
+    }
+
+
+    /* 회원별 채팅방 목록 조회(GET /chat/rooms/user) */
+    @GetMapping("/user")
+    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRoomsByUserNo(@RequestParam("userNo") Long userNo) {
         List<ChatRoomResponse> roomResponses = chatRoomService.findAllRoomsByUserId(userNo);
         ChatApiResponse<List<ChatRoomResponse>> apiResponse = ChatApiResponse.success(
                 roomResponses,
@@ -66,5 +78,4 @@ public class ChatRoomController {
         );
         return ResponseEntity.ok(apiResponse);
     }
-
 }

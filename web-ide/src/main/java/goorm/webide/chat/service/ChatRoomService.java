@@ -1,5 +1,6 @@
 package goorm.webide.chat.service;
 
+import goorm.webide.chat.dto.ChatApiResponse;
 import goorm.webide.chat.dto.ChatRoomRequest;
 import goorm.webide.chat.dto.ChatRoomResponse;
 import goorm.webide.chat.entity.ChatRoom;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * packageName    : goorm.webide.chat.service
@@ -38,10 +38,9 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatUserRepository chatUserRepository;
 
-    /* 채팅방 생성(POST /chat/rooms) */
+    /* 채팅방 생성 POST /chat/rooms */
     @Transactional
-    public ChatRoomResponse createChatRoom(ChatRoomRequest roomRequest) {
-        // 채팅방 생성
+    public ChatApiResponse<ChatRoomResponse> createChatRoom(ChatRoomRequest roomRequest) {
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomName(roomRequest.getRoomName())
                 .createdAt(LocalDateTime.now())
@@ -49,49 +48,48 @@ public class ChatRoomService {
                 .build();
         chatRoomRepository.save(chatRoom);
 
-        // 사용자 정보 조회
         User user = userRepository.findById(roomRequest.getUserNo())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        // 채팅방과 사용자를 연결하는 ChatUser 객체 생성 및 저장
         ChatUser chatUser = ChatUser.builder()
                 .chatRoom(chatRoom)
                 .user(user)
                 .build();
         chatUserRepository.save(chatUser);
 
-        return new ChatRoomResponse(
+        ChatRoomResponse roomResponse = new ChatRoomResponse(
                 roomRequest.getUserNo(),
                 chatRoom.getRoomNo(),
                 chatRoom.getRoomName(),
                 chatRoom.getCreatedAt(),
                 chatRoom.getUpdateAt());
+        return ChatApiResponse.success(roomResponse, "채팅방이 생성되었습니다.");
     }
 
-    /* 전체 채팅방 목록 조회(GET /chat/rooms) */
+    /* 전체 채팅방 목록 조회 GET /chat/rooms */
     @Transactional(readOnly = true)
-    public List<ChatRoomResponse> findAllRooms() {
-        return chatRoomRepository.findAll().stream()
+    public ChatApiResponse<List<ChatRoomResponse>> findAllRooms() {
+         List<ChatRoomResponse> roomResponse = chatRoomRepository.findAll().stream()
                 .map(room -> new ChatRoomResponse(
                         room.getRoomNo(),
                         room.getRoomName(),
                         room.getCreatedAt(),
                         room.getUpdateAt()))
-                .collect(Collectors.toList());
+                .toList();
+        return ChatApiResponse.success(roomResponse, "전체 채팅방 목록 조회에 성공했습니다.");
     }
 
-    /* 회원별 채팅방 목록 조회(GET /chat/rooms) */
+    /* 회원별 채팅방 목록 조회 GET /chat/rooms */
     @Transactional(readOnly = true)
-    public List<ChatRoomResponse> findAllRoomsByUserId(Long userNo) {
-        List<ChatUser> chatUsers = chatUserRepository.findByUserUserNo(userNo);
-
-        return chatUsers.stream()
+    public ChatApiResponse<List<ChatRoomResponse>> findAllRoomsByUserId(Long userNo) {
+        List<ChatRoomResponse> roomResponse = chatUserRepository.findByUserUserNo(userNo).stream()
                 .map(chatUser -> new ChatRoomResponse(
                         chatUser.getUser().getUserNo(),
                         chatUser.getChatRoom().getRoomNo(),
                         chatUser.getChatRoom().getRoomName(),
                         chatUser.getChatRoom().getCreatedAt(),
                         chatUser.getChatRoom().getUpdateAt()))
-                .collect(Collectors.toList());
+                .toList();
+        return ChatApiResponse.success(roomResponse, "채팅방 목록 조회에 성공했습니다.");
     }
 }

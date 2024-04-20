@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,51 +30,28 @@ import java.util.List;
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
-    // 검증 실패 예외 처리
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ChatApiResponse<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errorMessage = ex.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> fieldError.getDefaultMessage())
-                .findFirst()
-                .orElse("잘못된 입력입니다.");
-
-        return ChatApiResponse.fail(errorMessage);
-    }
-
-    /* 채팅방 생성(POST /chat/rooms) */
+    /* 채팅방 생성 POST /chat/rooms */
     @PostMapping
     public ResponseEntity<ChatApiResponse<ChatRoomResponse>> createChatRoom(
             @Valid @RequestBody ChatRoomRequest roomRequest
     ) {
-        ChatRoomResponse roomResponse = chatRoomService.createChatRoom(roomRequest);
-        ChatApiResponse<ChatRoomResponse> apiResponse = ChatApiResponse.success(
-                roomResponse,
-                "채팅방이 생성되었습니다."
-        );
+        ChatApiResponse<ChatRoomResponse> apiResponse = chatRoomService.createChatRoom(roomRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
-    /* 전체 채팅방 목록 조회(GET /chat/rooms) */
+    /* 전체 채팅방 목록 조회 GET /chat/rooms */
     @GetMapping
     public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRooms() {
-        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRooms();
-        ChatApiResponse<List<ChatRoomResponse>> apiResponse = ChatApiResponse.success(
-                roomResponses,
-                "전체 채팅방 목록 조회에 성공했습니다."
-        );
-        return ResponseEntity.ok(apiResponse);
+        ChatApiResponse<List<ChatRoomResponse>> apiResponse = chatRoomService.findAllRooms();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-
-    /* 회원별 채팅방 목록 조회(GET /chat/rooms/user) */
+    /* 회원별 채팅방 목록 조회 GET /chat/rooms/user */
     @GetMapping("/user")
-    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRoomsByUserNo(@RequestParam("userNo") Long userNo) {
-        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRoomsByUserId(userNo);
-        ChatApiResponse<List<ChatRoomResponse>> apiResponse = ChatApiResponse.success(
-                roomResponses,
-                "채팅방 목록 조회에 성공했습니다."
-        );
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRoomsByUserNo(
+            @RequestParam("userNo") Long userNo
+    ) {
+        ChatApiResponse<List<ChatRoomResponse>> apiResponse = chatRoomService.findAllRoomsByUserId(userNo);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

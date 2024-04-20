@@ -92,4 +92,22 @@ public class ChatRoomService {
                 .toList();
         return ChatApiResponse.success(roomResponse, "채팅방 목록 조회에 성공했습니다.");
     }
+
+    /* 채팅방 삭제 DELETE /chat/rooms/{roomNo} */
+    @Transactional
+    public ChatApiResponse<Long> deleteRoomByRoomNo(Long roomNo, Long userNo) {
+        User user = userRepository.findById(userNo)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        ChatRoom chatRoom = chatRoomRepository.findById(roomNo)
+                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
+
+        ChatUser chatUser = chatUserRepository.findByChatRoomRoomNoAndUserUserNo(roomNo, userNo);
+        if (chatUser == null) {
+            throw new IllegalStateException("채팅방 삭제 권한이 없습니다.");
+        }
+
+        chatRoomRepository.deleteById(roomNo);
+        return ChatApiResponse.success(null, "채팅방이 성공적으로 삭제되었습니다.");
+    }
 }

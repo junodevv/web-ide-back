@@ -54,4 +54,14 @@ public class ChatRoomController {
         ChatApiResponse<List<ChatRoomResponse>> apiResponse = chatRoomService.findAllRoomsByUserId(userNo);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
+    /* 채팅방 삭제 DELETE /chat/rooms/{roomNo} */
+    @DeleteMapping("/{roomNo}")
+    public ResponseEntity<ChatApiResponse<Long>> deleteRoomByRoomNo(
+            @PathVariable("roomNo") Long roomNo,
+            @RequestParam("userNo") Long userNo
+    ) {
+        ChatApiResponse<Long> apiResponse = chatRoomService.deleteRoomByRoomNo(roomNo, userNo);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

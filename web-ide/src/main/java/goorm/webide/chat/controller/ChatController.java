@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,12 +39,8 @@ public class ChatController {
             @RequestParam(defaultValue = "10", name = "size") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<ChatResponse> chatResponses = chatService.getAllChatsByRoomNo(roomNo, pageable);
-        ChatApiResponse<Page<ChatResponse>> apiResponse = ChatApiResponse.success(
-                chatResponses,
-                "채팅 내역을 성공적으로 불러왔습니다."
-        );
-        return ResponseEntity.ok(apiResponse);
+        ChatApiResponse<Page<ChatResponse>> chatResponses = chatService.getAllChatsByRoomNo(roomNo, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(chatResponses);
     }
 
     /* 채팅 내 메시지 검색 GET /chat/rooms/{roomNo}/search */
@@ -53,11 +50,7 @@ public class ChatController {
             @RequestParam("searchTxt") String searchTxt,
             Pageable pageable
     ) {
-        Page<ChatResponse> chatResponses = chatService.searchChatsByRoomNo(roomNo, searchTxt, pageable);
-        ChatApiResponse<Page<ChatResponse>> apiResponse = ChatApiResponse.success(
-                chatResponses,
-                "검색 결과입니다."
-        );
-        return ResponseEntity.ok(apiResponse);
+        ChatApiResponse<Page<ChatResponse>> chatResponses = chatService.searchChatsByRoomNo(roomNo, searchTxt, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(chatResponses);
     }
 }

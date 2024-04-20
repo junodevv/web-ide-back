@@ -2,6 +2,7 @@ package goorm.webide.chat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import goorm.webide.chat.dto.ChatApiResponse;
 import goorm.webide.chat.dto.ChatRequest;
 import goorm.webide.chat.dto.ChatResponse;
 import goorm.webide.chat.entity.Chat;
@@ -70,9 +71,9 @@ public class ChatService {
 
     /* 채팅 불러오기 GET /chat/rooms/{roomNo} */
     @Transactional(readOnly = true)
-    public Page<ChatResponse> getAllChatsByRoomNo(Long roomNo, Pageable pageable) {
+    public ChatApiResponse<Page<ChatResponse>> getAllChatsByRoomNo(Long roomNo, Pageable pageable) {
         Page<Chat> chats = chatRepository.findByChatRoomRoomNo(roomNo, pageable);
-        return chats.map(chat -> new ChatResponse(
+        Page<ChatResponse> chatResponse =  chats.map(chat -> new ChatResponse(
                 chat.getChatNo(),
                 chat.getChatRoom().getRoomNo(),
                 chat.getUser().getUserNo(),
@@ -80,13 +81,14 @@ public class ChatService {
                 chat.getCreatedAt(),
                 chat.getUpdateAt()
         ));
+        return ChatApiResponse.success(chatResponse, "채팅 내역을 성공적으로 불러왔습니다.");
     }
 
     /* 채팅 내 메시지 검색 GET /chat/rooms/{roomNo}/search */
     @Transactional(readOnly = true)
-    public Page<ChatResponse> searchChatsByRoomNo(Long roomNo, String searchTxt, Pageable pageable) {
+    public ChatApiResponse<Page<ChatResponse>> searchChatsByRoomNo(Long roomNo, String searchTxt, Pageable pageable) {
         Page<Chat> searchChats = chatRepository.findByChatRoomRoomNoAndChatTxtChatTxtContaining(roomNo, searchTxt, pageable);
-        return searchChats.map(chat -> new ChatResponse(
+        Page<ChatResponse> chatResponses = searchChats.map(chat -> new ChatResponse(
                 chat.getChatNo(),
                 chat.getChatRoom().getRoomNo(),
                 chat.getUser().getUserNo(),
@@ -94,5 +96,6 @@ public class ChatService {
                 chat.getCreatedAt(),
                 chat.getUpdateAt()
         ));
+        return ChatApiResponse.success(chatResponses, "검색 결과입니다.");
     }
 }

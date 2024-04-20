@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -53,7 +54,9 @@ class ChatRoomServiceTest {
         chatRoomService = new ChatRoomService(userRepository, chatRoomRepository, chatUserRepository);
     }
 
+    /* 채팅방 생성 */
     @Test
+    @Transactional
     public void createChatRoomTest() {
         // given
         ChatRoomRequest roomRequest = new ChatRoomRequest(1L, "test room");
@@ -79,7 +82,41 @@ class ChatRoomServiceTest {
         verify(chatUserRepository).save(any(ChatUser.class));
     }
 
+    /* 전체 채팅방 목록 조회 */
     @Test
+    @Transactional
+    public void findAllRoomsTest() {
+        // given
+        ChatRoomRequest roomRequest1 = new ChatRoomRequest(null, "room1");
+        ChatRoom chatRoom1 = ChatRoom.builder()
+                .roomName(roomRequest1.getRoomName())
+                .createdAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .build();
+        ChatRoomRequest roomRequest2 = new ChatRoomRequest(null, "room2");
+        ChatRoom chatRoom2 = ChatRoom.builder()
+                .roomName(roomRequest2.getRoomName())
+                .createdAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .build();
+
+        List<ChatRoom> rooms = Arrays.asList(chatRoom1, chatRoom2);
+        when(chatRoomRepository.findAll()).thenReturn(rooms);
+
+        // when
+        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRooms();
+
+        // then
+        assertNotNull(roomResponses);
+        assertEquals(2, roomResponses.size());
+        assertEquals("room1", roomResponses.get(0).getRoomName());
+        assertEquals("room2", roomResponses.get(1).getRoomName());
+        verify(chatRoomRepository).findAll();
+    }
+
+    /* 회원별 채팅방 목록 조회 */
+    @Test
+    @Transactional
     public void findAllRoomsByUserIdTest() {
         // given
         Long userNo = 1L;

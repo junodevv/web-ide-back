@@ -1,8 +1,6 @@
 package goorm.webide.chat.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import goorm.webide.chat.dto.ChatApiResponse;
-import goorm.webide.chat.dto.ChatRequest;
 import goorm.webide.chat.dto.ChatResponse;
 import goorm.webide.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * packageName    : goorm.webide.chat.controller
@@ -31,26 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/chat/rooms/{roomNo}")
 public class ChatController {
 
     private final ChatService chatService;
 
-    /* 채팅 보내기 */
-    @MessageMapping("/sendChat/{roomNo}")
-    @SendTo("/topic/chat/{roomNo}")
-    public ChatApiResponse<ChatResponse> sendChat(
-            @Payload ChatRequest chatRequest,
-            @DestinationVariable("roomNo") Long roomNo
-    ) throws JsonProcessingException {
-        if (chatRequest.getChatTxt() == null || chatRequest.getChatTxt().trim().isEmpty()) {
-            return ChatApiResponse.fail("채팅 메시지를 입력해야 합니다.");
-        }
-        ChatResponse chatResponse = chatService.saveChat(chatRequest, roomNo);
-        return ChatApiResponse.success(chatResponse, "채팅이 성공적으로 전송되었습니다.");
-    }
-
     /* 채팅 불러오기 GET /chat/rooms/{roomNo} */
-    @GetMapping("/chat/rooms/{roomNo}")
+    @GetMapping
     public ResponseEntity<ChatApiResponse<Page<ChatResponse>>> getChatsByRoomNO(
             @PathVariable("roomNo") Long roomNo,
             @RequestParam(defaultValue = "0", name = "page") int page,
@@ -66,7 +47,7 @@ public class ChatController {
     }
 
     /* 채팅 내 메시지 검색 GET /chat/rooms/{roomNo}/search */
-    @GetMapping("/chat/rooms/{roomNo}/search")
+    @GetMapping("/search")
     public ResponseEntity<ChatApiResponse<Page<ChatResponse>>> getChatsByRoomNo(
             @PathVariable("roomNo") Long roomNo,
             @RequestParam("searchTxt") String searchTxt,

@@ -1,4 +1,4 @@
-package goorm.webide.chat.controller;
+package goorm.webide.chat.socket;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * packageName    : goorm.webide.chat.controller
+ * packageName    : goorm.webide.chat.socket
  * fileName       : WebSocketStompClientConfig
  * author         : won
  * date           : 2024/04/18
@@ -21,7 +21,7 @@ import java.util.List;
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2024/04/18        won       최초 생성
+ * 2024/04/18        won       WebSocket + STOMP 관련 ClientConfig
  */
 
 @Profile("test")

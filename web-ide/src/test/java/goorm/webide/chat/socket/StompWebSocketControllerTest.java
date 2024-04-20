@@ -1,4 +1,4 @@
-package goorm.webide.chat.controller;
+package goorm.webide.chat.socket;
 
 import goorm.webide.chat.dto.ChatApiResponse;
 import goorm.webide.chat.dto.ChatRequest;
@@ -37,32 +37,29 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * packageName    : goorm.webide.chat.controller
- * fileName       : ChatControllerTest
+ * packageName    : goorm.webide.chat.socket
+ * fileName       : StompWebSocketControllerTest
  * author         : won
- * date           : 2024/04/18
+ * date           : 2024/04/20
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2024/04/18        won       최초 생성
+ * 2024/04/20        won       WebSocket + STOMP 관련 controller Test
  */
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class ChatControllerTest {
+class StompWebSocketControllerTest {
 
     @Autowired
     private WebSocketStompClient stompClient;
-
-    private CompletableFuture<ChatApiResponse<ChatResponse>> completableFuture;
-
     @MockBean
     private ChatService chatService;
-
     @LocalServerPort
     private int port;
 
+    private CompletableFuture<ChatApiResponse<ChatResponse>> completableFuture;
     private StompSession session;
 
     @BeforeEach
@@ -73,7 +70,7 @@ class ChatControllerTest {
 
         session = stompClient
                 .connect("ws://localhost:" + port + "/sendChat", new StompSessionHandlerAdapter() {})
-                .get(10, TimeUnit.SECONDS); // 타임아웃을 10초로 설정
+                .get(10, TimeUnit.SECONDS);
     }
 
     @AfterEach
@@ -93,6 +90,8 @@ class ChatControllerTest {
     private List<Transport> createTransportClient() {
         return Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()));
     }
+
+    /* 채팅 보내기 */
     @Test
     public void sendChatTest() throws Exception {
         // given
@@ -101,13 +100,13 @@ class ChatControllerTest {
         String chatTxt = "안녕하세요!";
 
         ChatRequest chatRequest = new ChatRequest(userNo, chatTxt);
-        ChatResponse chatResponse = new ChatResponse(userNo, roomNo, 1L, chatTxt, LocalDateTime.now());
+        ChatResponse chatResponse = new ChatResponse(userNo, roomNo, 1L, chatTxt, LocalDateTime.now(), LocalDateTime.now());
         when(chatService.saveChat(any(ChatRequest.class), anyLong())).thenReturn(chatResponse);
 
         session.subscribe("/topic/chat/1", new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
-                return ChatResponse.class; // 메시지 타입 설정
+                return ChatResponse.class;
             }
 
             @Override

@@ -1,6 +1,7 @@
 package goorm.webide.chat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import goorm.webide.chat.dto.ChatApiResponse;
 import goorm.webide.chat.dto.ChatRequest;
 import goorm.webide.chat.dto.ChatResponse;
 import goorm.webide.chat.entity.Chat;
@@ -111,13 +112,13 @@ class ChatServiceTest {
         when(chatRepository.findByChatRoomRoomNo(roomNo, pageable)).thenReturn(chatPage);
 
         // when
-        Page<ChatResponse> responses = chatService.getAllChatsByRoomNo(roomNo, pageable);
+        ChatApiResponse<Page<ChatResponse>> responses = chatService.getAllChatsByRoomNo(roomNo, pageable);
 
         // then
         assertNotNull(responses);
-        assertEquals(2, responses.getTotalElements());
-        assertEquals("채팅1", responses.getContent().get(0).getChatTxt());
-        assertEquals("채팅2", responses.getContent().get(1).getChatTxt());
+        assertEquals(2, responses.getData().getTotalElements());
+        assertEquals("채팅1", responses.getData().getContent().get(0).getChatTxt());
+        assertEquals("채팅2", responses.getData().getContent().get(1).getChatTxt());
         verify(chatRepository).findByChatRoomRoomNo(roomNo, pageable);
     }
 }

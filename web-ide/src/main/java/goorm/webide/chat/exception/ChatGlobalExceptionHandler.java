@@ -1,29 +1,15 @@
 package goorm.webide.chat.exception;
 
 import goorm.webide.chat.dto.ChatApiResponse;
-import goorm.webide.chat.dto.ChatRoomResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.nio.file.AccessDeniedException;
 import java.util.stream.Collectors;
-
-/**
- * packageName    : goorm.webide.chat.exception
- * fileName       : ChatGlobalExceptionHandler
- * author         : won
- * date           : 2024/04/20
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/20        won       최초 생성
- */
 
 @ControllerAdvice
 public class ChatGlobalExceptionHandler {
@@ -35,7 +21,6 @@ public class ChatGlobalExceptionHandler {
                 .collect(Collectors.joining(", "));
         ChatApiResponse<String> response = ChatApiResponse.fail(errorMessage);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//        return new ResponseEntity<>(ChatApiResponse.fail(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -52,7 +37,6 @@ public class ChatGlobalExceptionHandler {
     public ResponseEntity<ChatApiResponse<String>> handleAccessDeniedException(AccessDeniedException ex) {
         return new ResponseEntity<>(ChatApiResponse.fail(ex.getMessage()), HttpStatus.FORBIDDEN);
     }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ChatApiResponse<String>> handleAllUncaughtException(Exception ex) {

@@ -36,18 +36,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * packageName    : goorm.webide.chat.socket
- * fileName       : StompWebSocketControllerTest
- * author         : won
- * date           : 2024/04/20
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/20        won       WebSocket + STOMP 관련 controller Test
- */
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class StompWebSocketControllerTest {

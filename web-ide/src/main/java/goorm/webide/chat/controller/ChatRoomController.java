@@ -12,25 +12,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * packageName    : goorm.webide.chat.controller
- * fileName       : ChatRoomController
- * author         : won
- * date           : 2024/04/15
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/15        won       최초 생성
- */
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chat/rooms")
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
-    /* 채팅방 생성 POST /chat/rooms */
+    /** 채팅방 생성 POST /chat/rooms */
     @PostMapping
     public ResponseEntity<ChatApiResponse<ChatRoomResponse>> createChatRoom(
             @Valid @RequestBody ChatRoomRequest roomRequest
@@ -39,14 +27,14 @@ public class ChatRoomController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
-    /* 전체 채팅방 목록 조회 GET /chat/rooms */
+    /** 전체 채팅방 목록 조회 GET /chat/rooms */
     @GetMapping
     public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRooms() {
         ChatApiResponse<List<ChatRoomResponse>> apiResponse = chatRoomService.findAllRooms();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    /* 회원별 채팅방 목록 조회 GET /chat/rooms/user */
+    /** 회원별 채팅방 목록 조회 GET /chat/rooms/user?userNo= */
     @GetMapping("/user")
     public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRoomsByUserNo(
             @RequestParam("userNo") Long userNo
@@ -55,7 +43,7 @@ public class ChatRoomController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    /* 채팅방 삭제 DELETE /chat/rooms/{roomNo} */
+    /** 채팅방 삭제 DELETE /chat/rooms/{roomNo}?userNo= */
     @DeleteMapping("/{roomNo}")
     public ResponseEntity<ChatApiResponse<Long>> deleteRoomByRoomNo(
             @PathVariable("roomNo") Long roomNo,

@@ -12,18 +12,6 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * packageName    : goorm.webide.chat.socket
- * fileName       : WebSocketStompClientConfig
- * author         : won
- * date           : 2024/04/18
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/18        won       WebSocket + STOMP 관련 ClientConfig
- */
-
 @Profile("test")
 @Configuration
 public class WebSocketStompClientConfig {

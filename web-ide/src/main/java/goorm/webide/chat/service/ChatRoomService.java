@@ -10,46 +10,38 @@ import goorm.webide.chat.repository.ChatUserRepository;
 import goorm.webide.user.entity.User;
 import goorm.webide.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * packageName    : goorm.webide.chat.service
- * fileName       : ChatRoomService
- * author         : won
- * date           : 2024/04/15
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/15        won       최초 생성
- */
-
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ChatRoomService {
 
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatUserRepository chatUserRepository;
 
-    /* 채팅방 생성 POST /chat/rooms */
+    /**
+     * 채팅방 생성
+     *
+     * @param roomRequest 요청 객체(사용자 번호, 방 이름)
+     * @return 생성된 채팅방의 정보에 대한 응답 객체
+     * @throws RuntimeException 사용자 번호가 유효하지 않을 경우 예외 발생
+     */
     @Transactional
     public ChatApiResponse<ChatRoomResponse> createChatRoom(ChatRoomRequest roomRequest) {
+        User user = userRepository.findById(roomRequest.getUserNo())
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomName(roomRequest.getRoomName())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
                 .build();
         chatRoomRepository.save(chatRoom);
-
-        User user = userRepository.findById(roomRequest.getUserNo())
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         ChatUser chatUser = ChatUser.builder()
                 .chatRoom(chatRoom)
@@ -66,7 +58,11 @@ public class ChatRoomService {
         return ChatApiResponse.success(roomResponse, "채팅방이 생성되었습니다.");
     }
 
-    /* 전체 채팅방 목록 조회 GET /chat/rooms */
+    /**
+     * 모든 채팅방 목록 조회
+     *
+     * @return 채팅방 목록에 대한 응답 객체
+     */
     @Transactional(readOnly = true)
     public ChatApiResponse<List<ChatRoomResponse>> findAllRooms() {
          List<ChatRoomResponse> roomResponse = chatRoomRepository.findAll().stream()
@@ -79,7 +75,12 @@ public class ChatRoomService {
         return ChatApiResponse.success(roomResponse, "전체 채팅방 목록 조회에 성공했습니다.");
     }
 
-    /* 회원별 채팅방 목록 조회 GET /chat/rooms */
+    /**
+     * 회원별 채팅방 목록 조회
+     *
+     * @param userNo 사용자 고유 번호
+     * @return 해당 사용자의 채팅방 목록에 대한 응답 객체
+     */
     @Transactional(readOnly = true)
     public ChatApiResponse<List<ChatRoomResponse>> findAllRoomsByUserId(Long userNo) {
         List<ChatRoomResponse> roomResponse = chatUserRepository.findByUserUserNo(userNo).stream()
@@ -93,7 +94,15 @@ public class ChatRoomService {
         return ChatApiResponse.success(roomResponse, "채팅방 목록 조회에 성공했습니다.");
     }
 
-    /* 채팅방 삭제 DELETE /chat/rooms/{roomNo} */
+    /**
+     * 채팅방을 삭제 - 해당 채팅방 생성자만 삭제 가능
+     *
+     * @param roomNo 채팅방 고유 번호
+     * @param userNo 사용자 고유 번호
+     * @return 삭제 성공 여부에 대한 응답 객체
+     * @throws RuntimeException 채팅방 또는 사용자를 찾을 수 없을 경우 예외 발생
+     * @throws IllegalStateException 삭제 권한이 없는 경우 예외 발생
+     */
     @Transactional
     public ChatApiResponse<Long> deleteRoomByRoomNo(Long roomNo, Long userNo) {
         User user = userRepository.findById(userNo)

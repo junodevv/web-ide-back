@@ -12,18 +12,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * packageName    : goorm.webide.chat.socket
- * fileName       : StompWebSocketController
- * author         : won
- * date           : 2024/04/20
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/20        won       최초 생성
- */
-
 @RestController
 @RequiredArgsConstructor
 public class StompWebSocketController {

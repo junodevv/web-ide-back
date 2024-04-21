@@ -14,18 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * packageName    : goorm.webide.chat.entity
- * fileName       : ChatRoom
- * author         : won
- * date           : 2024/04/14
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/14        won       최초 생성
- */
-
 @Entity
 @Getter
 @NoArgsConstructor

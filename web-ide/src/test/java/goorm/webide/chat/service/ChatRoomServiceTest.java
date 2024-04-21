@@ -26,18 +26,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * packageName    : goorm.webide.chat.service
- * fileName       : ChatRoomServiceTest
- * author         : won
- * date           : 2024/04/17
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/17        won       최초 생성
- */
-
 @SpringBootTest
 class ChatRoomServiceTest {
     @Autowired

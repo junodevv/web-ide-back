@@ -7,18 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-/**
- * packageName    : goorm.webide.chat.dto
- * fileName       : ChatApiResponse
- * author         : won
- * date           : 2024/04/16
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/16        won       최초 생성
- */
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

@@ -12,18 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * packageName    : goorm.webide.chat.controller
- * fileName       : ChatController
- * author         : won
- * date           : 2024/04/14
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2024/04/14        won       최초 생성
- */
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chat/rooms/{roomNo}")
@@ -31,7 +19,7 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    /* 채팅 불러오기 GET /chat/rooms/{roomNo} */
+    /** 채팅 불러오기 GET /chat/rooms/{roomNo} */
     @GetMapping
     public ResponseEntity<ChatApiResponse<Page<ChatResponse>>> getChatsByRoomNO(
             @PathVariable("roomNo") Long roomNo,
@@ -43,7 +31,7 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.OK).body(chatResponses);
     }
 
-    /* 채팅 내 메시지 검색 GET /chat/rooms/{roomNo}/search */
+    /** 채팅 내 메시지 검색 GET /chat/rooms/{roomNo}/search?searchTxt= */
     @GetMapping("/search")
     public ResponseEntity<ChatApiResponse<Page<ChatResponse>>> getChatsByRoomNo(
             @PathVariable("roomNo") Long roomNo,

@@ -1,5 +1,6 @@
 package goorm.webide.common.config;
 
+import goorm.webide.common.jwt.JWTUtil;
 import goorm.webide.common.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -36,7 +38,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // 커스텀한 LoginFilter를 기존자리에 적용
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)),
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
                         UsernamePasswordAuthenticationFilter.class)
                 // 세션설정, stateless하도록 설정**
                 .sessionManagement((session) -> session

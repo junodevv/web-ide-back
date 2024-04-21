@@ -64,5 +64,16 @@ public class UserDetailDto implements UserDetails {
         return true;
     }
 
+    public Long getUserNo(){
+        return user.getUserNo();
+    }
+
+    public String getNickname(){
+        return user.getNickname();
+    }
+
+    public String getEmail(){
+        return user.getEmail();
+    }
 
 }

@@ -1,7 +1,7 @@
 package goorm.webide.user.service;
 
 import goorm.webide.user.dto.request.RegisterRequest;
-import goorm.webide.user.dto.response.RegisterResponse;
+import goorm.webide.user.dto.response.UserResponse;
 import goorm.webide.user.entity.User;
 import goorm.webide.user.repository.UserRepository;
 import goorm.webide.user.util.EntityDtoMapper;
@@ -20,7 +20,7 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    public RegisterResponse registerUser(RegisterRequest registerRequest){
+    public UserResponse registerUser(RegisterRequest registerRequest){
         checkDuplicate(registerRequest.getEmail(), registerRequest.getUsername());
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         registerRequest.setPassword(encodedPassword);

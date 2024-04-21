@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class RegisterResponse {
+public class UserResponse {
     private Boolean success;
     private String message;
 

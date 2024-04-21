@@ -1,5 +1,6 @@
 package goorm.webide.chat.service;
 
+import goorm.webide.chat.dto.ChatApiResponse;
 import goorm.webide.chat.dto.ChatRoomRequest;
 import goorm.webide.chat.dto.ChatRoomResponse;
 import goorm.webide.chat.entity.ChatRoom;
@@ -8,7 +9,6 @@ import goorm.webide.chat.repository.ChatRoomRepository;
 import goorm.webide.chat.repository.ChatUserRepository;
 import goorm.webide.user.entity.User;
 import goorm.webide.user.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +49,6 @@ class ChatRoomServiceTest {
     @MockBean
     ChatUserRepository chatUserRepository;
 
-    @BeforeEach
-    public void beforeEach() {
-        chatRoomService = new ChatRoomService(userRepository, chatRoomRepository, chatUserRepository);
-    }
-
     /* 채팅방 생성 */
     @Test
     @Transactional
@@ -66,12 +61,17 @@ class ChatRoomServiceTest {
                 .updateAt(LocalDateTime.now())
                 .build();
         User user = Mockito.mock(User.class);
+        ChatUser chatUser = ChatUser.builder()
+                .chatRoom(chatRoom)
+                .user(user)
+                .build();
 
         when(chatRoomRepository.save(any(ChatRoom.class))).thenReturn(chatRoom);
         when(userRepository.findById(roomRequest.getUserNo())).thenReturn(Optional.of(user));
+        when(chatUserRepository.save(any(ChatUser.class))).thenReturn(chatUser);
 
         // when
-        ChatRoomResponse roomResponse = chatRoomService.createChatRoom(roomRequest);
+        ChatRoomResponse roomResponse = chatRoomService.createChatRoom(roomRequest).getData();
 
         // then
         assertNotNull(roomResponse);
@@ -104,7 +104,7 @@ class ChatRoomServiceTest {
         when(chatRoomRepository.findAll()).thenReturn(rooms);
 
         // when
-        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRooms();
+        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRooms().getData();
 
         // then
         assertNotNull(roomResponses);
@@ -147,7 +147,7 @@ class ChatRoomServiceTest {
         when(chatUserRepository.findByUserUserNo(userNo)).thenReturn(chatUsers);
 
         // when
-        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRoomsByUserId(userNo);
+        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRoomsByUserId(userNo).getData();
 
         // then
         assertNotNull(roomResponses);
@@ -155,5 +155,41 @@ class ChatRoomServiceTest {
         assertEquals("room1", roomResponses.get(0).getRoomName());
         assertEquals("room2", roomResponses.get(1).getRoomName());
         verify(chatUserRepository).findByUserUserNo(userNo);
+    }
+
+    /* 채팅방 삭제 DELETE /chat/rooms/{roomNo} */
+    @Test
+    @Transactional
+    public void deleteRoomByRoomNo() {
+        // given
+        Long roomNo = 1L;
+        Long userNo = 1L;
+
+        User user = Mockito.mock(User.class);
+        ChatRoomRequest roomRequest = new ChatRoomRequest(userNo, "test room");
+        ChatRoom chatRoom = ChatRoom.builder()
+                .roomName(roomRequest.getRoomName())
+                .createdAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .build();
+        ChatUser chatUser = ChatUser.builder()
+                .chatRoom(chatRoom)
+                .user(user)
+                .build();
+
+        when(userRepository.findById(userNo)).thenReturn(Optional.of(user));
+        when(chatRoomRepository.findById(roomNo)).thenReturn(Optional.of(chatRoom));
+        when(chatUserRepository.findByChatRoomRoomNoAndUserUserNo(roomNo, userNo)).thenReturn(chatUser);
+
+        // when
+        ChatApiResponse<Long> chatRoomResponse = chatRoomService.deleteRoomByRoomNo(roomNo, userNo);
+
+        // then
+        assertNotNull(chatRoomResponse);
+        assertNull(chatRoomResponse.getData());
+        assertEquals("채팅방이 성공적으로 삭제되었습니다.", chatRoomResponse.getMessage());
+        verify(userRepository).findById(userNo);
+        verify(chatUserRepository).findByChatRoomRoomNoAndUserUserNo(roomNo, userNo);
+        verify(chatRoomRepository).deleteById(roomNo);
     }
 }

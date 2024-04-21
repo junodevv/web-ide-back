@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import goorm.webide.chat.dto.ChatApiResponse;
 import goorm.webide.chat.dto.ChatRequest;
 import goorm.webide.chat.dto.ChatResponse;
+import goorm.webide.chat.dto.ChatRoomRequest;
 import goorm.webide.chat.entity.Chat;
 import goorm.webide.chat.entity.ChatRoom;
 import goorm.webide.chat.repository.ChatRepository;
@@ -59,7 +60,6 @@ class ChatServiceTest {
     @BeforeEach
     public void beforeEach() {
         objectMapper = new ObjectMapper();
-        chatService = new ChatService(chatRepository, chatRoomRepository, userRepository, objectMapper);
     }
 
     /* 채팅 보내기 */
@@ -67,12 +67,17 @@ class ChatServiceTest {
     @Transactional
     public void saveChatTest() throws Exception {
         // given
-        ChatRoom chatRoom = Mockito.mock(ChatRoom.class);
+        Long userNo = 1L;
+        ChatRoomRequest roomRequest = new ChatRoomRequest(userNo, "test room");
+        ChatRoom chatRoom = ChatRoom.builder()
+                .roomName(roomRequest.getRoomName())
+                .createdAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .build();
         User user = Mockito.mock(User.class);
 
-        ChatRequest chatRequest = new ChatRequest(1L, "test chat text");
+        ChatRequest chatRequest = new ChatRequest(userNo, "test chat text");
         String json = objectMapper.writeValueAsString(chatRequest);
-
         Chat chat = Chat.builder()
                 .chatTxt(json)
                 .createdAt(LocalDateTime.now())
@@ -90,7 +95,10 @@ class ChatServiceTest {
 
         // then
         assertNotNull(chatResponse);
-        assertEquals("test chat text", chatRequest.getChatTxt());
+        String parseTxt = objectMapper.readTree(chatResponse.getChatTxt()).get("chatTxt").asText();
+        assertEquals("test chat text", parseTxt);
+        verify(chatRoomRepository).findById(chatRoom.getRoomNo());
+        verify(userRepository).findById(chatRequest.getUserNo());
         verify(chatRepository).save(any(Chat.class));
     }
 

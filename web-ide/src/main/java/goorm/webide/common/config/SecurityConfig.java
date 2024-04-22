@@ -1,5 +1,6 @@
 package goorm.webide.common.config;
 
+import goorm.webide.common.jwt.JWTFilter;
 import goorm.webide.common.jwt.JWTUtil;
 import goorm.webide.common.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
-                // JWT 방식은 세션이 stateless해서 csrf를 방어할 필요 X
+                // JWT 방식은 세션이 stateless 해서 csrf 를 방어할 필요 X
                 .csrf((auth) -> auth.disable())
                 // 스프링에서 제공하는 로그인 form disable
                 .formLogin((auth) -> auth.disable())
@@ -37,10 +38,12 @@ public class SecurityConfig {
                         .requestMatchers("/", "/user/register", "/user/login").permitAll()
                         .anyRequest().authenticated()
                 )
-                // 커스텀한 LoginFilter를 기존자리에 적용
+                // JWTFilter 등록
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                // 커스텀한 LoginFilter 를 기존자리에 적용
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
                         UsernamePasswordAuthenticationFilter.class)
-                // 세션설정, stateless하도록 설정**
+                // 세션설정, stateless 하도록 설정**
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();

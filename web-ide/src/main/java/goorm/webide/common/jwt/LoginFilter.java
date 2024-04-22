@@ -63,7 +63,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
         String nickname = userDetailDto.getNickname();
         String email = userDetailDto.getEmail();
 
-        String token = jwtUtil.createJwt(email, userNo, 60*6*10L);
+        String token = jwtUtil.createJwt(email, userNo, 30*60*1000L);
 
         response.addHeader("Authorization", "Bearer " + token);
 

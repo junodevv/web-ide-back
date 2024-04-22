@@ -1,17 +1,14 @@
 package goorm.webide.user.entity;
 
+import goorm.webide.chat.entity.Chat;
+import goorm.webide.chat.entity.ChatUser;
 import goorm.webide.user.util.enums.DeleteStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,6 +52,14 @@ public class User{
 
     @Enumerated(EnumType.STRING)
     private DeleteStatus deleteStatus;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY)
+    private Set<ChatUser> chatUsers;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY)
+    private List<Chat> chats;
 
     @PrePersist
     public void prePersist(){

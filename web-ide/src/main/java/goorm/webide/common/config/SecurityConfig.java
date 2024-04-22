@@ -3,6 +3,9 @@ package goorm.webide.common.config;
 import goorm.webide.common.jwt.JWTFilter;
 import goorm.webide.common.jwt.JWTUtil;
 import goorm.webide.common.jwt.LoginFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -27,6 +33,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
+                // cors 설정, Filter단 설정, controller단은 따로 해줘야함
+                .cors((cors) -> cors
+                        .configurationSource(new CorsConfigurationSource() {
+                            @Override
+                            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                                CorsConfiguration configuration = new CorsConfiguration();
+                                // 허용할 front단의 주소
+                                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                                // 허용 메소드 : all
+                                configuration.setAllowedMethods(Collections.singletonList("*"));
+                                configuration.setAllowCredentials(true);
+                                // 허용할 헤더
+                                configuration.setAllowedHeaders(Collections.singletonList("*"));
+                                // 허용할 시간
+                                configuration.setMaxAge(3600L);
+                                // Authorization 헤더 허용
+                                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                                return configuration;
+                            }
+                        }))
                 // JWT 방식은 세션이 stateless 해서 csrf 를 방어할 필요 X
                 .csrf((auth) -> auth.disable())
                 // 스프링에서 제공하는 로그인 form disable

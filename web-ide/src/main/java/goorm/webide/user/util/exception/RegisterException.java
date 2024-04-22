@@ -5,9 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
-public class RegisterException extends RuntimeException{
-    private Boolean success;
-    private String message;
-    private List<String> errors;
+public class RegisterException extends UserException{
+    public RegisterException(Boolean success, String message, List<String> errors) {
+        super(success, message, errors);
+    }
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.nio.file.AccessDeniedException;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+@ControllerAdvice(basePackages = "goorm.webide.chat")
 public class ChatGlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

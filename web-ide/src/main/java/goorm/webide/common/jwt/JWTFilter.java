@@ -26,7 +26,10 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorization = request.getHeader("Authorization");
         // authorization 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-            log.info("token null");
+            String requestURI = request.getRequestURI();
+            if(tokenNullAllow(requestURI)){
+                log.info("token null");
+            }
             filterChain.doFilter(request, response);
             return;
         }
@@ -57,5 +60,12 @@ public class JWTFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request,response);
+    }
+
+    private boolean tokenNullAllow(String requestURI){
+        if(requestURI.startsWith("/user") || requestURI.matches("/")){
+            return false;
+        }
+        return true;
     }
 }

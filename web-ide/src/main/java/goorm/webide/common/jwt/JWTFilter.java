@@ -1,23 +1,19 @@
 package goorm.webide.common.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import goorm.webide.user.dto.UserDetailDto;
-import goorm.webide.user.dto.response.UserResponse;
 import goorm.webide.user.entity.User;
-import goorm.webide.user.entity.User.UserBuilder;
-import goorm.webide.user.util.enums.LoginResult;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+@Slf4j
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -30,25 +26,26 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorization = request.getHeader("Authorization");
         // authorization 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-            System.out.println("token null");
-
+            log.info("token null");
             filterChain.doFilter(request, response);
             return;
         }
+
         String token = authorization.split(" ")[1];
-
         if (jwtUtil.isExpired(token)) {
-            System.out.println("token expired");
+            log.info("token expired");
             filterChain.doFilter(request, response);
             return;
         }
 
-        String username = jwtUtil.getUsername(token);
+//        String username = jwtUtil.getUsername(token);
+        String email = jwtUtil.getEmail(token);
         Long userNo = jwtUtil.getUserNo(token);
+
 
         User user = User.builder()
                 .userNo(userNo)
-                .username(username)
+                .email(email)
                 .password("tempPassword")
                 .build();
         UserDetailDto userDetailDto = new UserDetailDto(user);

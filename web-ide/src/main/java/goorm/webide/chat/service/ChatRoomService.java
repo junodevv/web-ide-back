@@ -7,9 +7,11 @@ import goorm.webide.chat.entity.ChatRoom;
 import goorm.webide.chat.entity.ChatUser;
 import goorm.webide.chat.repository.ChatRoomRepository;
 import goorm.webide.chat.repository.ChatUserRepository;
+import goorm.webide.user.dto.UserDetailDto;
 import goorm.webide.user.entity.User;
 import goorm.webide.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +35,10 @@ public class ChatRoomService {
      */
     @Transactional
     public ChatApiResponse<ChatRoomResponse> createChatRoom(ChatRoomRequest roomRequest) {
-        User user = userRepository.findById(roomRequest.getUserNo())
+        UserDetailDto userDetailDto = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userNo = userDetailDto.getUserNo();
+
+        User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         ChatRoom chatRoom = ChatRoom.builder()
@@ -50,7 +55,7 @@ public class ChatRoomService {
         chatUserRepository.save(chatUser);
 
         ChatRoomResponse roomResponse = new ChatRoomResponse(
-                roomRequest.getUserNo(),
+                userNo,
                 chatRoom.getRoomNo(),
                 chatRoom.getRoomName(),
                 chatRoom.getCreatedAt(),

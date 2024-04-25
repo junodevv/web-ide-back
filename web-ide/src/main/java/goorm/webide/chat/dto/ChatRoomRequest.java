@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomRequest {
-    @NotNull
-    private Long userNo;
 
     @NotBlank(message = "채팅방 이름을 입력해야 합니다.")
     @Size(max = 20, message = "채팅방 이름은 최대 20자까지 가능합니다.")

@@ -44,7 +44,7 @@ public class CodeController {
     }
 
     @PutMapping("/code/{codeNo}")
-    public ResponseEntity<Object> updateCode(@RequestBody CodeRequest request, @PathVariable("CodeNo") Long codeNo) {
+    public ResponseEntity<Object> updateCode(@PathVariable("codeNo") Long codeNo, @RequestBody CodeRequest request) {
         codeService.updateCode(codeNo, request.toDto());
         CodeResponse response = CodeResponse.from(codeService.getCode(codeNo));
         return successResponse(CustomMessage.OK, response);

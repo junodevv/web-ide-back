@@ -108,13 +108,13 @@ class ChatRoomServiceTest {
     public void findAllRoomsByUserIdTest() {
         // given
         Long userNo = 1L;
-        ChatRoomRequest roomRequest1 = new ChatRoomRequest(userNo, "room1");
+        ChatRoomRequest roomRequest1 = new ChatRoomRequest("room1");
         ChatRoom chatRoom1 = ChatRoom.builder()
                 .roomName(roomRequest1.getRoomName())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
                 .build();
-        ChatRoomRequest roomRequest2 = new ChatRoomRequest(userNo, "room2");
+        ChatRoomRequest roomRequest2 = new ChatRoomRequest("room2");
         ChatRoom chatRoom2 = ChatRoom.builder()
                 .roomName(roomRequest2.getRoomName())
                 .createdAt(LocalDateTime.now())
@@ -135,7 +135,7 @@ class ChatRoomServiceTest {
         when(chatUserRepository.findByUserUserNo(userNo)).thenReturn(chatUsers);
 
         // when
-        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRoomsByUserId(userNo).getData();
+        List<ChatRoomResponse> roomResponses = chatRoomService.findAllRoomsByUserId().getData();
 
         // then
         assertNotNull(roomResponses);
@@ -154,7 +154,7 @@ class ChatRoomServiceTest {
         Long userNo = 1L;
 
         User user = Mockito.mock(User.class);
-        ChatRoomRequest roomRequest = new ChatRoomRequest(userNo, "test room");
+        ChatRoomRequest roomRequest = new ChatRoomRequest("test room");
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomName(roomRequest.getRoomName())
                 .createdAt(LocalDateTime.now())
@@ -170,7 +170,7 @@ class ChatRoomServiceTest {
         when(chatUserRepository.findByChatRoomRoomNoAndUserUserNo(roomNo, userNo)).thenReturn(chatUser);
 
         // when
-        ChatApiResponse<Long> chatRoomResponse = chatRoomService.deleteRoomByRoomNo(roomNo, userNo);
+        ChatApiResponse<Long> chatRoomResponse = chatRoomService.deleteRoomByRoomNo(roomNo);
 
         // then
         assertNotNull(chatRoomResponse);

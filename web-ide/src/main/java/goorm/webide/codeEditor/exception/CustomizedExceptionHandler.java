@@ -36,8 +36,4 @@ public class CustomizedExceptionHandler {
     }
 
     //파일 유형 에러
-    @ExceptionHandler
-    public ResponseEntity<Object> ioException(IOException ex){
-        return errorResponse(CustomMessage.BAD_FILE);
-    }
 }

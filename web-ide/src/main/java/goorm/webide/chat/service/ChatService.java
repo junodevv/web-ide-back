@@ -9,11 +9,13 @@ import goorm.webide.chat.entity.Chat;
 import goorm.webide.chat.entity.ChatRoom;
 import goorm.webide.chat.repository.ChatRepository;
 import goorm.webide.chat.repository.ChatRoomRepository;
+import goorm.webide.user.dto.UserDetailDto;
 import goorm.webide.user.entity.User;
 import goorm.webide.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,9 +43,13 @@ public class ChatService {
     public ChatResponse saveChat(ChatRequest chatRequest, Long roomNo) throws JsonProcessingException {
         String json = objectMapper.writeValueAsString(chatRequest);
 
+        UserDetailDto userDetailDto = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userNo = userDetailDto.getUserNo();
+
         ChatRoom chatRoom = chatRoomRepository.findById(roomNo)
                 .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다."));
-        User user = userRepository.findById(chatRequest.getUserNo())
+
+        User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Chat chat = Chat.builder()

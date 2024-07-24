@@ -41,7 +41,7 @@ public class SecurityConfig {
 
                                 CorsConfiguration configuration = new CorsConfiguration();
                                 // 허용할 front단의 주소
-                                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                                configuration.setAllowedOriginPatterns(Collections.singletonList("*")); // 테스트 기간동안 모든 요청 허용
                                 // 허용 메소드 : all
                                 configuration.setAllowedMethods(Collections.singletonList("*"));
                                 configuration.setAllowCredentials(true);
@@ -63,7 +63,7 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable())
                 // 경로별 인가
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/", "/user/register", "/user/login").permitAll()
+                        .requestMatchers("/", "/user/register", "/user/login", "/test").permitAll()
                         .anyRequest().authenticated()
                 )
                 // JWTFilter 등록

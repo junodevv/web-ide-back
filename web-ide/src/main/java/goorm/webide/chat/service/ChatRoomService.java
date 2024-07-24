@@ -7,9 +7,11 @@ import goorm.webide.chat.entity.ChatRoom;
 import goorm.webide.chat.entity.ChatUser;
 import goorm.webide.chat.repository.ChatRoomRepository;
 import goorm.webide.chat.repository.ChatUserRepository;
+import goorm.webide.user.dto.UserDetailDto;
 import goorm.webide.user.entity.User;
 import goorm.webide.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +35,10 @@ public class ChatRoomService {
      */
     @Transactional
     public ChatApiResponse<ChatRoomResponse> createChatRoom(ChatRoomRequest roomRequest) {
-        User user = userRepository.findById(roomRequest.getUserNo())
+        UserDetailDto userDetailDto = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userNo = userDetailDto.getUserNo();
+
+        User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         ChatRoom chatRoom = ChatRoom.builder()
@@ -50,7 +55,7 @@ public class ChatRoomService {
         chatUserRepository.save(chatUser);
 
         ChatRoomResponse roomResponse = new ChatRoomResponse(
-                roomRequest.getUserNo(),
+                userNo,
                 chatRoom.getRoomNo(),
                 chatRoom.getRoomName(),
                 chatRoom.getCreatedAt(),
@@ -78,11 +83,13 @@ public class ChatRoomService {
     /**
      * 회원별 채팅방 목록 조회
      *
-     * @param userNo 사용자 고유 번호
      * @return 해당 사용자의 채팅방 목록에 대한 응답 객체
      */
     @Transactional(readOnly = true)
-    public ChatApiResponse<List<ChatRoomResponse>> findAllRoomsByUserId(Long userNo) {
+    public ChatApiResponse<List<ChatRoomResponse>> findAllRoomsByUserId() {
+        UserDetailDto userDetailDto = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userNo = userDetailDto.getUserNo();
+
         List<ChatRoomResponse> roomResponse = chatUserRepository.findByUserUserNo(userNo).stream()
                 .map(chatUser -> new ChatRoomResponse(
                         chatUser.getUser().getUserNo(),
@@ -98,13 +105,15 @@ public class ChatRoomService {
      * 채팅방을 삭제 - 해당 채팅방 생성자만 삭제 가능
      *
      * @param roomNo 채팅방 고유 번호
-     * @param userNo 사용자 고유 번호
      * @return 삭제 성공 여부에 대한 응답 객체
      * @throws RuntimeException 채팅방 또는 사용자를 찾을 수 없을 경우 예외 발생
      * @throws IllegalStateException 삭제 권한이 없는 경우 예외 발생
      */
     @Transactional
-    public ChatApiResponse<Long> deleteRoomByRoomNo(Long roomNo, Long userNo) {
+    public ChatApiResponse<Long> deleteRoomByRoomNo(Long roomNo) {
+        UserDetailDto userDetailDto = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userNo = userDetailDto.getUserNo();
+
         User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 

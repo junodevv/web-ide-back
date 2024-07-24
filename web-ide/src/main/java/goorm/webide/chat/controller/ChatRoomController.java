@@ -36,20 +36,17 @@ public class ChatRoomController {
 
     /** 회원별 채팅방 목록 조회 GET /chat/rooms/user?userNo= */
     @GetMapping("/user")
-    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRoomsByUserNo(
-            @RequestParam("userNo") Long userNo
-    ) {
-        ChatApiResponse<List<ChatRoomResponse>> apiResponse = chatRoomService.findAllRoomsByUserId(userNo);
+    public ResponseEntity<ChatApiResponse<List<ChatRoomResponse>>> getAllRoomsByUserNo() {
+        ChatApiResponse<List<ChatRoomResponse>> apiResponse = chatRoomService.findAllRoomsByUserId();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     /** 채팅방 삭제 DELETE /chat/rooms/{roomNo}?userNo= */
     @DeleteMapping("/{roomNo}")
     public ResponseEntity<ChatApiResponse<Long>> deleteRoomByRoomNo(
-            @PathVariable("roomNo") Long roomNo,
-            @RequestParam("userNo") Long userNo
+            @PathVariable("roomNo") Long roomNo
     ) {
-        ChatApiResponse<Long> apiResponse = chatRoomService.deleteRoomByRoomNo(roomNo, userNo);
+        ChatApiResponse<Long> apiResponse = chatRoomService.deleteRoomByRoomNo(roomNo);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }
